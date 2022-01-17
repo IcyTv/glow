@@ -1,15 +1,15 @@
 [package]
-name = "glow"
-version = "0.11.2"
-description = "GL on Whatever: a set of bindings to run GL (Open GL, OpenGL ES, and WebGL) anywhere, and avoid target-specific code."
 authors = [
   "Joshua Groves <josh@joshgroves.com>",
   "Dzmitry Malyshau <kvarkus@gmail.com>",
 ]
-homepage = "https://github.com/grovesNL/glow.git"
-repository = "https://github.com/grovesNL/glow"
-license = "MIT OR Apache-2.0"
+description = "GL on Whatever: a set of bindings to run GL (Open GL, OpenGL ES, and WebGL) anywhere, and avoid target-specific code."
 edition = "2018"
+homepage = "https://github.com/grovesNL/glow.git"
+license = "MIT OR Apache-2.0"
+name = "glow"
+repository = "https://github.com/grovesNL/glow"
+version = "0.11.2"
 
 [package.metadata.docs.rs]
 default-target = "x86_64-unknown-linux-gnu"
@@ -19,21 +19,25 @@ targets = [
   "x86_64-pc-windows-msvc",
   "i686-unknown-linux-gnu",
   "i686-pc-windows-msvc",
-  "wasm32-unknown-unknown"
+  "wasm32-unknown-unknown",
 ]
 
 [lib]
 name = "glow"
 path = "src/lib.rs"
 
+[features]
+anyhow-errors = []
+
+[dependencies]
+anyhow = {version = "1", optional = true}
+
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 js-sys = "~0.3"
-wasm-bindgen = "~0.2"
 slotmap = "1"
+wasm-bindgen = "~0.2"
 
 [target.'cfg(target_arch = "wasm32")'.dependencies.web_sys]
-version = "~0.3.37"
-package = "web-sys"
 features = [
   "Document",
   "Element",
@@ -56,7 +60,6 @@ features = [
   "WebGlUniformLocation",
   "WebGlVertexArrayObject",
   "Window",
-
   "AngleInstancedArrays",
   "ExtBlendMinmax",
   "ExtColorBufferFloat",
@@ -86,6 +89,8 @@ features = [
   "WebglDrawBuffers",
   "WebglLoseContext",
 ]
+package = "web-sys"
+version = "~0.3.37"
 
 [workspace]
 members = [

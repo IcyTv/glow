@@ -166,7 +166,7 @@ impl HasContext for Context {
         &self.version
     }
 
-    unsafe fn create_framebuffer(&self) -> Result<Self::Framebuffer, String> {
+    unsafe fn create_framebuffer(&self) -> Result<Self::Framebuffer> {
         let gl = &self.raw;
         let mut name = 0;
         gl.GenFramebuffers(1, &mut name);
@@ -178,14 +178,14 @@ impl HasContext for Context {
         gl.IsFramebuffer(framebuffer.0.get()) != 0
     }
 
-    unsafe fn create_query(&self) -> Result<Self::Query, String> {
+    unsafe fn create_query(&self) -> Result<Self::Query> {
         let gl = &self.raw;
         let mut name = 0;
         gl.GenQueries(1, &mut name);
         Ok(NativeQuery(non_zero_gl_name(name)))
     }
 
-    unsafe fn create_renderbuffer(&self) -> Result<Self::Renderbuffer, String> {
+    unsafe fn create_renderbuffer(&self) -> Result<Self::Renderbuffer> {
         let gl = &self.raw;
         let mut name = 0;
         gl.GenRenderbuffers(1, &mut name);
@@ -197,14 +197,14 @@ impl HasContext for Context {
         gl.IsRenderbuffer(renderbuffer.0.get()) != 0
     }
 
-    unsafe fn create_sampler(&self) -> Result<Self::Sampler, String> {
+    unsafe fn create_sampler(&self) -> Result<Self::Sampler> {
         let gl = &self.raw;
         let mut name = 0;
         gl.GenSamplers(1, &mut name);
         Ok(NativeSampler(non_zero_gl_name(name)))
     }
 
-    unsafe fn create_shader(&self, shader_type: u32) -> Result<Self::Shader, String> {
+    unsafe fn create_shader(&self, shader_type: u32) -> Result<Self::Shader> {
         let gl = &self.raw;
         Ok(NativeShader(non_zero_gl_name(
             gl.CreateShader(shader_type as u32),
@@ -216,7 +216,7 @@ impl HasContext for Context {
         gl.IsShader(shader.0.get()) != 0
     }
 
-    unsafe fn create_texture(&self) -> Result<Self::Texture, String> {
+    unsafe fn create_texture(&self) -> Result<Self::Texture> {
         let gl = &self.raw;
         let mut name = 0;
         gl.GenTextures(1, &mut name);
@@ -296,7 +296,7 @@ impl HasContext for Context {
         );
     }
 
-    unsafe fn create_program(&self) -> Result<Self::Program, String> {
+    unsafe fn create_program(&self) -> Result<Self::Program> {
         let gl = &self.raw;
         Ok(NativeProgram(non_zero_gl_name(gl.CreateProgram())))
     }
@@ -397,7 +397,7 @@ impl HasContext for Context {
         gl.UseProgram(program.map(|p| p.0.get()).unwrap_or(0));
     }
 
-    unsafe fn create_buffer(&self) -> Result<Self::Buffer, String> {
+    unsafe fn create_buffer(&self) -> Result<Self::Buffer> {
         let gl = &self.raw;
         let mut buffer = 0;
         gl.GenBuffers(1, &mut buffer);
@@ -482,7 +482,7 @@ impl HasContext for Context {
         );
     }
 
-    unsafe fn create_vertex_array(&self) -> Result<Self::VertexArray, String> {
+    unsafe fn create_vertex_array(&self) -> Result<Self::VertexArray> {
         let gl = &self.raw;
         let mut vertex_array = 0;
         gl.GenVertexArrays(1, &mut vertex_array);
@@ -1836,7 +1836,7 @@ impl HasContext for Context {
         gl.ActiveTexture(unit);
     }
 
-    unsafe fn fence_sync(&self, condition: u32, flags: u32) -> Result<Self::Fence, String> {
+    unsafe fn fence_sync(&self, condition: u32, flags: u32) -> Result<Self::Fence> {
         let gl = &self.raw;
         Ok(NativeFence(gl.FenceSync(condition as u32, flags)))
     }
@@ -2545,7 +2545,7 @@ impl HasContext for Context {
         value
     }
 
-    unsafe fn create_transform_feedback(&self) -> Result<Self::TransformFeedback, String> {
+    unsafe fn create_transform_feedback(&self) -> Result<Self::TransformFeedback> {
         let gl = &self.raw;
         let mut name = 0;
         gl.GenTransformFeedbacks(1, &mut name);
@@ -2598,7 +2598,7 @@ impl HasContext for Context {
             .iter()
             .copied()
             .map(CString::new)
-            .collect::<Result<_, _>>()
+            .collect::<std::result::Result<_, _>>()
             .unwrap();
         let varyings: Vec<_> = strings.iter().map(|c_str| c_str.as_ptr()).collect();
 

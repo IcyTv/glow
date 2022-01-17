@@ -12,6 +12,11 @@ use std::collections::HashSet;
 mod version;
 pub use version::Version;
 
+#[cfg(feature = "anyhow")]
+type Result<T> = anyhow::Result<T>;
+#[cfg(not(feature = "anyhow"))]
+type Result<T> = std::result::Result<T, String>;
+
 #[cfg(any(not(target_arch = "wasm32"), target_os = "emscripten"))]
 mod native;
 #[cfg(any(not(target_arch = "wasm32"), target_os = "emscripten"))]
@@ -100,23 +105,23 @@ pub trait HasContext {
 
     fn version(&self) -> &Version;
 
-    unsafe fn create_framebuffer(&self) -> Result<Self::Framebuffer, String>;
+    unsafe fn create_framebuffer(&self) -> Result<Self::Framebuffer>;
 
     unsafe fn is_framebuffer(&self, framebuffer: Self::Framebuffer) -> bool;
 
-    unsafe fn create_query(&self) -> Result<Self::Query, String>;
+    unsafe fn create_query(&self) -> Result<Self::Query>;
 
-    unsafe fn create_renderbuffer(&self) -> Result<Self::Renderbuffer, String>;
+    unsafe fn create_renderbuffer(&self) -> Result<Self::Renderbuffer>;
 
     unsafe fn is_renderbuffer(&self, renderbuffer: Self::Renderbuffer) -> bool;
 
-    unsafe fn create_sampler(&self) -> Result<Self::Sampler, String>;
+    unsafe fn create_sampler(&self) -> Result<Self::Sampler>;
 
-    unsafe fn create_shader(&self, shader_type: u32) -> Result<Self::Shader, String>;
+    unsafe fn create_shader(&self, shader_type: u32) -> Result<Self::Shader>;
 
     unsafe fn is_shader(&self, shader: Self::Shader) -> bool;
 
-    unsafe fn create_texture(&self) -> Result<Self::Texture, String>;
+    unsafe fn create_texture(&self) -> Result<Self::Texture>;
 
     unsafe fn is_texture(&self, texture: Self::Texture) -> bool;
 
@@ -139,7 +144,7 @@ pub trait HasContext {
         pixels: PixelPackData,
     );
 
-    unsafe fn create_program(&self) -> Result<Self::Program, String>;
+    unsafe fn create_program(&self) -> Result<Self::Program>;
 
     unsafe fn is_program(&self, program: Self::Program) -> bool;
 
@@ -165,7 +170,7 @@ pub trait HasContext {
 
     unsafe fn use_program(&self, program: Option<Self::Program>);
 
-    unsafe fn create_buffer(&self) -> Result<Self::Buffer, String>;
+    unsafe fn create_buffer(&self) -> Result<Self::Buffer>;
 
     unsafe fn is_buffer(&self, buffer: Self::Buffer) -> bool;
 
@@ -208,7 +213,7 @@ pub trait HasContext {
         filter: u32,
     );
 
-    unsafe fn create_vertex_array(&self) -> Result<Self::VertexArray, String>;
+    unsafe fn create_vertex_array(&self) -> Result<Self::VertexArray>;
 
     unsafe fn delete_vertex_array(&self, vertex_array: Self::VertexArray);
 
@@ -824,7 +829,7 @@ pub trait HasContext {
 
     unsafe fn active_texture(&self, unit: u32);
 
-    unsafe fn fence_sync(&self, condition: u32, flags: u32) -> Result<Self::Fence, String>;
+    unsafe fn fence_sync(&self, condition: u32, flags: u32) -> Result<Self::Fence>;
 
     unsafe fn tex_parameter_f32(&self, target: u32, parameter: u32, value: f32);
 
@@ -1093,7 +1098,7 @@ pub trait HasContext {
 
     unsafe fn delete_transform_feedback(&self, transform_feedback: Self::TransformFeedback);
 
-    unsafe fn create_transform_feedback(&self) -> Result<Self::TransformFeedback, String>;
+    unsafe fn create_transform_feedback(&self) -> Result<Self::TransformFeedback>;
 
     unsafe fn bind_transform_feedback(
         &self,

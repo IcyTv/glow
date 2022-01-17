@@ -10,6 +10,15 @@ use web_sys::{
     WebGlUniformLocation, WebGlVertexArrayObject,
 };
 
+#[cfg(feature = "anyhow")]
+fn error(msg: &str) -> anyhow::Error {
+    anyhow::anyhow!(String::from(msg))
+}
+#[cfg(not(feature = "anyhow"))]
+fn error(msg: &str) -> String {
+    String::from(msg)
+}
+
 #[derive(Debug)]
 enum RawRenderingContext {
     WebGl1(WebGlRenderingContext),
@@ -473,7 +482,7 @@ impl HasContext for Context {
         &self.version
     }
 
-    unsafe fn create_framebuffer(&self) -> Result<Self::Framebuffer, String> {
+    unsafe fn create_framebuffer(&self) -> Result<Self::Framebuffer> {
         let raw_framebuffer = match self.raw {
             RawRenderingContext::WebGl1(ref gl) => gl.create_framebuffer(),
             RawRenderingContext::WebGl2(ref gl) => gl.create_framebuffer(),
@@ -484,7 +493,7 @@ impl HasContext for Context {
                 let key = self.framebuffers.borrow_mut().insert(s);
                 Ok(key)
             }
-            None => Err(String::from("Unable to create framebuffer object")),
+            None => Err(error("Unable to create framebuffer object")),
         }
     }
 
@@ -500,10 +509,10 @@ impl HasContext for Context {
         }
     }
 
-    unsafe fn create_query(&self) -> Result<Self::Query, String> {
+    unsafe fn create_query(&self) -> Result<Self::Query> {
         let raw_query = match self.raw {
             RawRenderingContext::WebGl1(ref _gl) => {
-                return Err(String::from("Query objects are not supported"));
+                return Err(error("Query objects are not supported"));
             }
             RawRenderingContext::WebGl2(ref gl) => gl.create_query(),
         };
@@ -513,11 +522,11 @@ impl HasContext for Context {
                 let key = self.queries.borrow_mut().insert(s);
                 Ok(key)
             }
-            None => Err(String::from("Unable to create query object")),
+            None => Err(error("Unable to create query object")),
         }
     }
 
-    unsafe fn create_renderbuffer(&self) -> Result<Self::Renderbuffer, String> {
+    unsafe fn create_renderbuffer(&self) -> Result<Self::Renderbuffer> {
         let raw_renderbuffer = match self.raw {
             RawRenderingContext::WebGl1(ref gl) => gl.create_renderbuffer(),
             RawRenderingContext::WebGl2(ref gl) => gl.create_renderbuffer(),
@@ -528,7 +537,7 @@ impl HasContext for Context {
                 let key = self.renderbuffers.borrow_mut().insert(s);
                 Ok(key)
             }
-            None => Err(String::from("Unable to create renderbuffer object")),
+            None => Err(error("Unable to create renderbuffer object")),
         }
     }
 
@@ -544,7 +553,7 @@ impl HasContext for Context {
         }
     }
 
-    unsafe fn create_sampler(&self) -> Result<Self::Sampler, String> {
+    unsafe fn create_sampler(&self) -> Result<Self::Sampler> {
         let raw_sampler = match self.raw {
             RawRenderingContext::WebGl1(ref _gl) => panic!("Sampler objects are not supported"),
             RawRenderingContext::WebGl2(ref gl) => gl.create_sampler(),
@@ -555,11 +564,11 @@ impl HasContext for Context {
                 let key = self.samplers.borrow_mut().insert(s);
                 Ok(key)
             }
-            None => Err(String::from("Unable to create sampler object")),
+            None => Err(error("Unable to create sampler object")),
         }
     }
 
-    unsafe fn create_shader(&self, shader_type: u32) -> Result<Self::Shader, String> {
+    unsafe fn create_shader(&self, shader_type: u32) -> Result<Self::Shader> {
         let raw_shader = match self.raw {
             RawRenderingContext::WebGl1(ref gl) => gl.create_shader(shader_type as u32),
             RawRenderingContext::WebGl2(ref gl) => gl.create_shader(shader_type as u32),
@@ -570,7 +579,7 @@ impl HasContext for Context {
                 let key = self.shaders.borrow_mut().insert(s);
                 Ok(key)
             }
-            None => Err(String::from("Unable to create shader object")),
+            None => Err(error("Unable to create shader object")),
         }
     }
 
@@ -586,7 +595,7 @@ impl HasContext for Context {
         }
     }
 
-    unsafe fn create_texture(&self) -> Result<Self::Texture, String> {
+    unsafe fn create_texture(&self) -> Result<Self::Texture> {
         let raw_texture = match self.raw {
             RawRenderingContext::WebGl1(ref gl) => gl.create_texture(),
             RawRenderingContext::WebGl2(ref gl) => gl.create_texture(),
@@ -597,7 +606,7 @@ impl HasContext for Context {
                 let key = self.textures.borrow_mut().insert(t);
                 Ok(key)
             }
-            None => Err(String::from("Unable to create texture object")),
+            None => Err(error("Unable to create texture object")),
         }
     }
 
@@ -677,7 +686,7 @@ impl HasContext for Context {
         panic!("Get tex image is not supported");
     }
 
-    unsafe fn create_program(&self) -> Result<Self::Program, String> {
+    unsafe fn create_program(&self) -> Result<Self::Program> {
         let raw_program = match self.raw {
             RawRenderingContext::WebGl1(ref gl) => gl.create_program(),
             RawRenderingContext::WebGl2(ref gl) => gl.create_program(),
@@ -688,7 +697,7 @@ impl HasContext for Context {
                 let key = self.programs.borrow_mut().insert(p);
                 Ok(key)
             }
-            None => Err(String::from("Unable to create program object")),
+            None => Err(error("Unable to create program object")),
         }
     }
 
@@ -822,7 +831,7 @@ impl HasContext for Context {
         }
     }
 
-    unsafe fn create_buffer(&self) -> Result<Self::Buffer, String> {
+    unsafe fn create_buffer(&self) -> Result<Self::Buffer> {
         let raw_buffer = match self.raw {
             RawRenderingContext::WebGl1(ref gl) => gl.create_buffer(),
             RawRenderingContext::WebGl2(ref gl) => gl.create_buffer(),
@@ -833,7 +842,7 @@ impl HasContext for Context {
                 let key = self.buffers.borrow_mut().insert(p);
                 Ok(key)
             }
-            None => Err(String::from("Unable to create buffer object")),
+            None => Err(error("Unable to create buffer object")),
         }
     }
 
@@ -942,7 +951,7 @@ impl HasContext for Context {
         }
     }
 
-    unsafe fn create_vertex_array(&self) -> Result<Self::VertexArray, String> {
+    unsafe fn create_vertex_array(&self) -> Result<Self::VertexArray> {
         let raw_vertex_array = match self.raw {
             RawRenderingContext::WebGl1(ref _gl) => {
                 match &self.extensions.oes_vertex_array_object {
@@ -958,7 +967,7 @@ impl HasContext for Context {
                 let key = self.vertex_arrays.borrow_mut().insert(va);
                 Ok(key)
             }
-            None => Err(String::from("Unable to create vertex array object")),
+            None => Err(error("Unable to create vertex array object")),
         }
     }
 
@@ -2696,7 +2705,7 @@ impl HasContext for Context {
         }
     }
 
-    unsafe fn fence_sync(&self, condition: u32, flags: u32) -> Result<Self::Fence, String> {
+    unsafe fn fence_sync(&self, condition: u32, flags: u32) -> Result<Self::Fence> {
         let raw_fence = match self.raw {
             RawRenderingContext::WebGl1(ref _gl) => panic!("Fences are not supported"),
             RawRenderingContext::WebGl2(ref gl) => gl.fence_sync(condition as u32, flags),
@@ -2706,7 +2715,7 @@ impl HasContext for Context {
                 let key = self.fences.borrow_mut().insert(f);
                 Ok(key)
             }
-            None => Err(String::from("Unable to create fence object")),
+            None => Err(error("Unable to create fence object")),
         }
     }
 
@@ -3488,7 +3497,7 @@ impl HasContext for Context {
         }
     }
 
-    unsafe fn create_transform_feedback(&self) -> Result<Self::TransformFeedback, String> {
+    unsafe fn create_transform_feedback(&self) -> Result<Self::TransformFeedback> {
         let raw_transform_feedback = match self.raw {
             RawRenderingContext::WebGl1(ref _gl) => {
                 panic!("TransformFeedback objects are not supported")
@@ -3501,7 +3510,7 @@ impl HasContext for Context {
                 let key = self.transform_feedbacks.borrow_mut().insert(t);
                 Ok(key)
             }
-            None => Err(String::from("Unable to create TransformFeedback object")),
+            None => Err(error("Unable to create TransformFeedback object")),
         }
     }
 
