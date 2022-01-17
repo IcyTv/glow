@@ -277,6 +277,8 @@ pub trait HasContext {
         size: i32,
     );
 
+    unsafe fn clear_tex_image(&self, texture: Self::Texture, level: i32, format: u32, data: &[u8]);
+
     unsafe fn copy_tex_image_2d(
         &self,
         target: u32,

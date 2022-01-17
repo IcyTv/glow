@@ -1206,6 +1206,10 @@ impl HasContext for Context {
         }
     }
 
+    unsafe fn clear_tex_image(&self, texture: Self::Texture, level: i32, format: u32, data: &[u8]) {
+        panic!("glClearTexImage is not supported");
+    }
+
     unsafe fn copy_tex_image_2d(
         &self,
         target: u32,
