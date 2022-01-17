@@ -632,6 +632,10 @@ impl HasContext for Context {
         }
     }
 
+    unsafe fn shader_binary(&self, shader: Self::Shader, binary: &[u8], entry_point: Option<&str>) {
+        panic!("shader_binary is not supported in webgl");
+    }
+
     unsafe fn shader_source(&self, shader: Self::Shader, source: &str) {
         let shaders = self.shaders.borrow();
         let raw_shader = shaders.get_unchecked(shader);

@@ -233,6 +233,27 @@ impl HasContext for Context {
         gl.DeleteShader(shader.0.get());
     }
 
+    unsafe fn shader_binary(&self, shader: Self::Shader, binary: &[u8], entry_point: Option<&str>) {
+        let gl = &self.raw;
+        gl.ShaderBinary(
+            1,
+            &shader.0.get(),
+            SHADER_BINARY_FORMAT_SPIR_V,
+            binary.as_ptr() as *const _,
+            binary.len() as i32,
+        );
+        let entry_point = entry_point.unwrap_or("main");
+        let entry_point = CString::new(entry_point).unwrap();
+
+        gl.SpecializeShader(
+            shader.0.get(),
+            entry_point.as_ptr(),
+            0,
+            std::ptr::null(),
+            std::ptr::null(),
+        );
+    }
+
     unsafe fn shader_source(&self, shader: Self::Shader, source: &str) {
         let gl = &self.raw;
         gl.ShaderSource(

@@ -129,6 +129,12 @@ pub trait HasContext {
 
     unsafe fn shader_source(&self, shader: Self::Shader, source: &str);
 
+    /// Combines glShaderBinary and glSpecializeShader
+    /// Only Supports SPIR-V binary shaders for now, and only for GL 4.5+
+    ///
+    /// https://www.khronos.org/opengl/wiki/SPIR-V/Compilation
+    unsafe fn shader_binary(&self, shader: Self::Shader, binary: &[u8], entry_point: Option<&str>);
+
     unsafe fn compile_shader(&self, shader: Self::Shader);
 
     unsafe fn get_shader_compile_status(&self, shader: Self::Shader) -> bool;
