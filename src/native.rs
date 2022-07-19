@@ -676,13 +676,13 @@ impl HasContext for Context {
         );
     }
 
-    unsafe fn clear_tex_image(&self, name: Self::Texture, level: i32, format: u32, data: &[u8]) {
+    unsafe fn clear_tex_image(&self, name: Self::Texture, level: i32, format: u32, type_: Option<u32>, data: &[u8]) {
         let gl = &self.raw;
         gl.ClearTexImage(
             name.0.get(),
             level,
             format,
-            UNSIGNED_BYTE,
+            type_.unwrap_or(UNSIGNED_BYTE),
             data.as_ptr() as *const std::ffi::c_void,
         );
     }
